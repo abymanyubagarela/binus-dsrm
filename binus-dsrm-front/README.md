@@ -218,3 +218,11 @@ Major update with Vue 3 migration and comprehensive redesign.
 ### Version 1.0.0 - Initial Release - [Jan 22, 2024]
 
 - Initial release of TailAdmin Vue.
+
+# catatan 
+docker build -t binus-frontend .
+docker run -it --rm -p 5173:5173 binus-frontend
+
+docker build -t binus-backend .
+# Run container
+docker run -it --rm -p 8000:8000 binus-backend
