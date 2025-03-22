@@ -273,6 +273,7 @@
 </template>
 
 <script setup lang="ts">
+import axios from '@/lib/axios'
 import { ref } from 'vue'
 import CommonGridShape from '@/components/common/CommonGridShape.vue'
 import FullScreenLayout from '@/components/layout/FullScreenLayout.vue'
@@ -285,12 +286,31 @@ const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
 }
 
-const handleSubmit = () => {
-  // Handle form submission
-  console.log('Form submitted', {
-    email: email.value,
-    password: password.value,
-    keepLoggedIn: keepLoggedIn.value,
-  })
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const handleSubmit = async () => {
+  try {
+    const response = await axios.post('/login', {
+      email: email.value,
+      password: password.value,
+    })
+
+    // Simpan status login
+    localStorage.setItem('isLoggedIn', 'true')
+    localStorage.setItem('auth_token', response.data.token) // Simpan token jika ada
+
+    // Arahkan ke dashboard atau halaman utama
+    router.push('/')
+  } catch (error: any) {
+    if (error.response) {
+      console.error('❌ Login gagal', error.response.data)
+      alert(error.response.data.message || 'Login gagal')
+    } else {
+      console.error('❌ Network Error', error.message)
+      alert('Network error. Coba lagi nanti.')
+    }
+  }
 }
 </script>

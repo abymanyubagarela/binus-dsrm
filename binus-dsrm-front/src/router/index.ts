@@ -12,6 +12,7 @@ const router = createRouter({
       component: () => import('../views/Ecommerce.vue'),
       meta: {
         title: 'eCommerce Dashboard',
+        requiresAuth: true, // Menambahkan meta field untuk memeriksa autentikasi
       },
     },
     {
@@ -20,6 +21,7 @@ const router = createRouter({
       component: () => import('../views/Others/Calendar.vue'),
       meta: {
         title: 'Calendar',
+        requiresAuth: true,
       },
     },
     {
@@ -28,6 +30,7 @@ const router = createRouter({
       component: () => import('../views/Others/UserProfile.vue'),
       meta: {
         title: 'Profile',
+        requiresAuth: true,
       },
     },
     {
@@ -36,6 +39,7 @@ const router = createRouter({
       component: () => import('../views/Forms/FormElements.vue'),
       meta: {
         title: 'Form Elements',
+        requiresAuth: true,
       },
     },
     {
@@ -44,17 +48,24 @@ const router = createRouter({
       component: () => import('../views/Tables/BasicTables.vue'),
       meta: {
         title: 'Basic Tables',
+        requiresAuth: true,
       },
     },
     {
       path: '/line-chart',
       name: 'Line Chart',
       component: () => import('../views/Chart/LineChart/LineChart.vue'),
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/bar-chart',
       name: 'Bar Chart',
       component: () => import('../views/Chart/BarChart/BarChart.vue'),
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: '/alerts',
@@ -62,6 +73,7 @@ const router = createRouter({
       component: () => import('../views/UiElements/Alerts.vue'),
       meta: {
         title: 'Alerts',
+        requiresAuth: true,
       },
     },
     {
@@ -70,6 +82,7 @@ const router = createRouter({
       component: () => import('../views/UiElements/Avatars.vue'),
       meta: {
         title: 'Avatars',
+        requiresAuth: true,
       },
     },
     {
@@ -78,24 +91,25 @@ const router = createRouter({
       component: () => import('../views/UiElements/Badges.vue'),
       meta: {
         title: 'Badge',
+        requiresAuth: true,
       },
     },
-
     {
       path: '/buttons',
       name: 'Buttons',
       component: () => import('../views/UiElements/Buttons.vue'),
       meta: {
         title: 'Buttons',
+        requiresAuth: true,
       },
     },
-
     {
       path: '/images',
       name: 'Images',
       component: () => import('../views/UiElements/Images.vue'),
       meta: {
         title: 'Images',
+        requiresAuth: true,
       },
     },
     {
@@ -104,6 +118,7 @@ const router = createRouter({
       component: () => import('../views/UiElements/Videos.vue'),
       meta: {
         title: 'Videos',
+        requiresAuth: true,
       },
     },
     {
@@ -112,9 +127,9 @@ const router = createRouter({
       component: () => import('../views/Pages/BlankPage.vue'),
       meta: {
         title: 'Blank',
+        requiresAuth: true,
       },
     },
-
     {
       path: '/error-404',
       name: '404 Error',
@@ -123,7 +138,6 @@ const router = createRouter({
         title: '404 Error',
       },
     },
-
     {
       path: '/signin',
       name: 'Signin',
@@ -143,9 +157,19 @@ const router = createRouter({
   ],
 })
 
-export default router
-
 router.beforeEach((to, from, next) => {
+  const isLoggedIn = localStorage.getItem('isLoggedIn') // Cek status login
+  const requiresAuth = to.meta.requiresAuth // Cek apakah route memerlukan autentikasi
+
+  // Set judul halaman
   document.title = `Vue.js ${to.meta.title} | TailAdmin - Vue.js Tailwind CSS Dashboard Template`
-  next()
+
+  // Jika route memerlukan autentikasi dan pengguna belum login, arahkan ke halaman signin
+  if (requiresAuth && isLoggedIn !== 'true') {
+    next('/signin')
+  } else {
+    next()
+  }
 })
+
+export default router

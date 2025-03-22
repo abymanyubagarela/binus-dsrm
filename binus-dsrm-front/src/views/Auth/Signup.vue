@@ -15,7 +15,7 @@
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="20"
-                viewBox="0 0 20 20"
+                viewBox="1 0 20 20"
                 fill="none"
               >
                 <path
@@ -325,15 +325,29 @@ const agreeToTerms = ref(false)
 const togglePasswordVisibility = () => {
   showPassword.value = !showPassword.value
 }
+import axios from '@/lib/axios'
+import { useRouter } from 'vue-router'
 
-const handleSubmit = () => {
-  // Implement form submission logic here
-  console.log('Form submitted', {
-    firstName: firstName.value,
-    lastName: lastName.value,
-    email: email.value,
-    password: password.value,
-    agreeToTerms: agreeToTerms.value,
-  })
+const router = useRouter()
+
+const handleSubmit = async () => {
+  try {
+    const response = await axios.post('/register', {
+      first_name: firstName.value,
+      last_name: lastName.value,
+      email: email.value,
+      password: password.value,
+    })
+
+    console.log('✅ Signup berhasil:', response.data)
+  } catch (error: any) {
+    if (error.response?.status === 422) {
+      console.error('❌ Validasi gagal', error.response.data.errors)
+      alert(Object.values(error.response.data.errors).flat().join('\n'))
+    } else {
+      console.error('❌ Network error:', error.message)
+      alert('Terjadi kesalahan jaringan.')
+    }
+  }
 }
 </script>
